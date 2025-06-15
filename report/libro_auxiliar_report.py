@@ -22,7 +22,10 @@ class ReportLibroAuxiliar(models.AbstractModel):
         start_acc = wizard.account_start
         end_acc = wizard.account_end
 
-        print("Fechas: ", date_from, date_to)
+        _logger.info("📋 Libro Auxiliar: wizard id=%s, desde=%s, hasta=%s, all_subs=%s, start=%s, end=%s",
+                     wizard.id, date_from, date_to, all_subs,
+                     start_acc.code if start_acc else None,
+                     end_acc.code if end_acc else None)
 
         # Validación de fechas
         if date_from > date_to:
@@ -36,14 +39,17 @@ class ReportLibroAuxiliar(models.AbstractModel):
 
         if not all_subs:
             domain_acc.append(('group_id', 'child_of', start_acc.group_id.id))
-        accounts = self.env['account.account'].search(domain_acc, order='group_id,code')
 
-        # Agrupar por grupo de mayor
+        accounts = self.env['account.account'].search(domain_acc, order='group_id,code')
+        _logger.info("✅ Cuentas encontradas: %s", len(accounts))
+
+        for acc in accounts:
+            _logger.info("   - %s %s", acc.code, acc.name)
+
         rows = []
         processed_groups = set()
-        print("CUENTAS DETALLE ENCONTRADAS:", flush=True)
+
         for acc in accounts:
-            print(acc.code, acc.name, flush=True)
             grp = acc.group_id
             if grp.id not in processed_groups:
                 # Fila de agrupadora
@@ -77,6 +83,8 @@ class ReportLibroAuxiliar(models.AbstractModel):
                 ('date', '<=', date_to),
                 ('move_id.state', '=', 'posted'),
             ], order='date,move_id')
+            _logger.info("   > Cuenta %s: %s líneas de asientos", acc.code, len(move_lines))
+
             total_debit = total_credit = 0.0
             for ln in move_lines:
                 rows.append({
@@ -100,6 +108,13 @@ class ReportLibroAuxiliar(models.AbstractModel):
                 'total_credit': total_credit,
                 'final_balance': final_balance,
             })
+
+        if move_lines:
+            rows.append({'type': 'group', 'code': acc.code, 'name': acc.name})
+            # etc.
+
+        _logger.info("🔚 Total de filas a pintar (rows): %s", len(rows))
+
 
         # Cálculo del Total General
         total_debit_general = sum(r['total_debit'] for r in rows if r['type'] == 'total')
