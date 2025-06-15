@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_libro_auxiliar_pdf" model="ir.actions.report">
+        <field name="name">Libro Auxiliar (PDF)</field>
+        <field name="model">libro.auxiliar.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">libro_diario_report.libro_auxiliar_template_pdf</field>
+        <field name="report_file">libro_diario_report.libro_auxiliar_template_pdf</field>
+        <field name="print_report_name">
+            'Libro Auxiliar (PDF) - ' + dict([
+            (1, "Enero"), (2, "Febrero"), (3, "Marzo"), (4, "Abril"),
+            (5, "Mayo"), (6, "Junio"), (7, "Julio"), (8, "Agosto"),
+            (9, "Septiembre"), (10, "Octubre"), (11, "Noviembre"), (12, "Diciembre")
+            ]).get(object.date_from and object.date_from.month, 'Mes') + '.pdf'
+        </field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+
+</odoo>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="libro_diario_mayor_pdf">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                <!-- Encabezado del reporte -->
+                <h2>Libro Diario Mayor</h2>
+                <p>Empresa:
+                    <span t-esc="company_name"/>
+                </p>
+                <p>Fecha:
+                    <span t-esc="data['date_from']"/>
+                    -
+                    <span t-esc="data['date_to']"/>
+                </p>
+
+                <!-- Tabla de cuentas de mayor -->
+                <table class="table table-sm o_main_table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Código de Cuenta</th>
+                            <th>Nombre de la Cuenta</th>
+                            <th>Saldo Inicial</th>
+                            <th>Debe</th>
+                            <th>Haber</th>
+                            <th>Saldo Final</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="accounts" t-as="account">
+                            <tr>
+                                <td style="text-align:center;">
+                                    <span t-esc="account['code']"/>
+                                </td>
+                                <td style="text-align:left;">
+                                    <span t-esc="account['name']"/>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span t-esc="'{:,.2f}'.format(account['saldo_inicial'])"/>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span t-esc="'{:,.2f}'.format(account['debe'])"/>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span t-esc="'{:,.2f}'.format(account['haber'])"/>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span t-esc="'{:,.2f}'.format(account['saldo_final'])"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <!-- Una celda que abarque las dos primeras columnas para la etiqueta "Totales" -->
+                            <td colspan="2" style="text-align:center;">
+                                <strong>Totales</strong>
+                            </td>
+                            <td style="text-align:center; border-top: 1px solid black;">
+
+                            </td>
+                            <td style="text-align:center; border-top: 1px solid black;">
+                                <span t-esc="'{:,.2f}'.format(sum(account['debe'] for account in accounts))"/>
+                            </td >
+                            <td style="text-align:center; border-top: 1px solid black;">
+                                <span t-esc="'{:,.2f}'.format(sum(account['haber'] for account in accounts))"/>
+                            </td>
+                            <td style="text-align:center; border-top: 1px solid black;">
+
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+
+            </t>
+
+        </t>
+    </template>
+</odoo>

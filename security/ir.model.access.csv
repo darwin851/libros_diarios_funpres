@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_libro_diario_wizard,libro.diario.report.wizard user access,model_libro_diario_report_wizard,account.group_account_user,1,1,1,1
+access_libro_diario_mayor_wizard,access_libro_diario_mayor_wizard,model_libro_diario_mayor_report_wizard,base.group_user,1,1,1,1
+access_libro_auxiliar_wizard,access_libro_auxiliar_wizard,model_libro_auxiliar_wizard,base.group_user,1,1,1,1

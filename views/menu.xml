@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_libro_diario_wizard" model="ir.actions.act_window">
+        <field name="name">Generar Libro Diario</field>
+        <field name="res_model">libro.diario.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_libro_diario_mayor_wizard" model="ir.actions.act_window">
+        <field name="name">Generar Libro Diario Mayor</field>
+        <field name="res_model">libro.diario.mayor.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_libro_auxiliar_wizard" model="ir.actions.act_window">
+        <field name="name">Libro Auxiliar</field>
+        <field name="res_model">libro.auxiliar.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <menuitem
+            id="reports_accounting_funpres_sv"
+            name="Libros Contables Funpres"
+            parent="account.menu_finance_reports"
+            sequence="100"/>
+
+    <menuitem
+            id="menu_libro_diario_wizard"
+            name="Libro Diario"
+            action="action_libro_diario_wizard"
+            parent="reports_accounting_funpres_sv"
+            sequence="10"/>
+
+    <!-- Nuevo reporte de Libro Diario Mayor -->
+    <menuitem
+            id="menu_libro_diario_mayor_wizard"
+            name="Libro Diario Mayor"
+            action="action_libro_diario_mayor_wizard"
+            parent="reports_accounting_funpres_sv"
+            sequence="20"/>
+
+    <menuitem
+            id="menu_libro_auxiliar_wizard"
+            name="Libro Auxiliar"
+            action="action_libro_auxiliar_wizard"
+            parent="reports_accounting_funpres_sv"
+            sequence="30"/>
+</odoo>
+

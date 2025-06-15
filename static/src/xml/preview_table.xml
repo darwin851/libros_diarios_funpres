@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+  <t t-name="libro_diario_report.PreviewTable">
+    <table class="table table-sm o_main_table">
+      <thead>
+        <tr>
+          <th>Partida #</th>
+          <th>Fecha</th>
+          <th>Concepto</th>
+          <th>Debe</th>
+          <th>Haber</th>
+          <th>Saldo Final</th>
+        </tr>
+      </thead>
+      <tbody>
+        <t t-foreach="state.rows" t-as="row" t-key="row.id">
+          <t t-if="row.type === 'group'">
+            <tr>
+              <td><t t-esc="row.code"/></td>
+              <td/><td><t t-esc="row.name"/></td><td/><td/><td/>
+            </tr>
+          </t>
+          <t t-elif="row.type === 'detail'">
+            <tr>
+              <td><strong><t t-esc="row.code"/></strong></td>
+              <td/><td><strong><t t-esc="row.name"/></strong></td>
+              <td/><td>Saldo inicial:</td>
+              <td><t t-esc="row.initial_balance"/></td>
+            </tr>
+          </t>
+          <t t-elif="row.type === 'move'">
+            <tr>
+              <td><t t-esc="row.move_name"/></td>
+              <td><t t-esc="row.date"/></td>
+              <td><t t-esc="row.label"/></td>
+              <td><t t-esc="row.debit"/></td>
+              <td><t t-esc="row.credit"/></td>
+              <td/>
+            </tr>
+          </t>
+          <t t-elif="row.type === 'total'">
+            <tr>
+              <td/><td/><td><strong>Totales Cuenta:</strong></td>
+              <td><t t-esc="row.total_debit"/></td>
+              <td><t t-esc="row.total_credit"/></td>
+              <td><t t-esc="row.final_balance"/></td>
+            </tr>
+          </t>
+        </t>
+      </tbody>
+    </table>
+  </t>
+</templates>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_libro_diario_report_wizard" model="ir.ui.view">
+        <field name="name">libro.diario.report.wizard.form</field>
+        <field name="model">libro.diario.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generar Libro Diario">
+                <group>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="export_format"/>
+                </group>
+                <footer>
+                    <button string="Generar Reporte" type="object" name="action_generate_report" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,60 @@
+<odoo>
+    <template id="libro_diario_template_pdf">
+        <t t-call="web.external_layout">
+            <main class="page">
+                <style>
+                    * {
+                        font-size: 12px;
+                    }
+                </style>
+
+                <h2 style="text-align: center;">Libro Diario</h2>
+                <p><strong>Desde:</strong> <t t-esc="data.get('date_from')"/> - <strong>Hasta:</strong> <t t-esc="data.get('date_to')"/></p>
+                <p><strong>Fecha de emisión:</strong> <t t-esc="fecha_emision"/></p>
+
+                <t t-foreach="docs" t-as="grupo">
+                    <h6>Asiento: <t t-esc="grupo['asiento']"/> | Fecha: <t t-esc="grupo['fecha']"/></h6>
+                    <table class="table table-sm o_main_table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Cuenta</th>
+                                <th>Nombre de la cuenta</th>
+                                <th style="text-align:right;">Debe</th>
+                                <th style="text-align:right;">Haber</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="grupo['lineas']" t-as="linea">
+                                <tr>
+                                    <td><t t-esc="linea['cuenta']"/></td>
+                                    <td><t t-esc="linea['nombre_cuenta']"/></td>
+                                    <td style="text-align:right;"><t t-esc="'{:,.2f}'.format(linea['debe'])"/></td>
+                                    <td style="text-align:right;"><t t-esc="'{:,.2f}'.format(linea['haber'])"/></td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="2" style="text-align:right;"><strong>Total del Asiento:</strong></td>
+                                <td style="text-align:right;"><strong><t t-esc="'{:,.2f}'.format(grupo['total_debe_asiento'])"/></strong></td>
+                                <td style="text-align:right;"><strong><t t-esc="'{:,.2f}'.format(grupo['total_haber_asiento'])"/></strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                </t>
+
+                <h4 style="text-align:right;">TOTAL GENERAL</h4>
+                <table class="table table-sm o_main_table" style="width: 100%;">
+                    <tr>
+                        <td style="text-align:right;"><strong>Total Debe:</strong></td>
+                        <td style="text-align:right;"><strong><t t-esc="'{:,.2f}'.format(total_debe_general)"/></strong></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right;"><strong>Total Haber:</strong></td>
+                        <td style="text-align:right;"><strong><t t-esc="'{:,.2f}'.format(total_haber_general)"/></strong></td>
+                    </tr>
+                </table>
+
+            </main>
+        </t>
+    </template>
+</odoo>
