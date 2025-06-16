@@ -1,12 +1,10 @@
 # File: report/libro_auxiliar_report.py
 from odoo import api, models, _
 from odoo.exceptions import UserError
-import logging
-_logger = logging.getLogger(__name__)
 
 
 class ReportLibroAuxiliar(models.AbstractModel):
-    _name = 'report.libro_diario_report.libro_auxiliar_report_template_pdf'
+    _name = 'report.libro_diario_report.libro_auxiliar_template_pdf'
     _description = 'Reporte Auxiliar de Mayor'
 
     @api.model
@@ -22,11 +20,6 @@ class ReportLibroAuxiliar(models.AbstractModel):
         start_acc = wizard.account_start
         end_acc = wizard.account_end
 
-        _logger.info("📋 Libro Auxiliar: wizard id=%s, desde=%s, hasta=%s, all_subs=%s, start=%s, end=%s",
-                     wizard.id, date_from, date_to, all_subs,
-                     start_acc.code if start_acc else None,
-                     end_acc.code if end_acc else None)
-
         # Validación de fechas
         if date_from > date_to:
             raise UserError("La fecha Desde debe ser anterior o igual a Hasta.")
@@ -36,19 +29,13 @@ class ReportLibroAuxiliar(models.AbstractModel):
             ('code', '>=', start_acc.code),
             ('code', '<=', end_acc.code),
         ]
-
         if not all_subs:
             domain_acc.append(('group_id', 'child_of', start_acc.group_id.id))
-
         accounts = self.env['account.account'].search(domain_acc, order='group_id,code')
-        _logger.info("✅ Cuentas encontradas: %s", len(accounts))
 
-        for acc in accounts:
-            _logger.info("   - %s %s", acc.code, acc.name)
-
+        # Agrupar por grupo de mayor
         rows = []
         processed_groups = set()
-
         for acc in accounts:
             grp = acc.group_id
             if grp.id not in processed_groups:
@@ -83,8 +70,6 @@ class ReportLibroAuxiliar(models.AbstractModel):
                 ('date', '<=', date_to),
                 ('move_id.state', '=', 'posted'),
             ], order='date,move_id')
-            _logger.info("   > Cuenta %s: %s líneas de asientos", acc.code, len(move_lines))
-
             total_debit = total_credit = 0.0
             for ln in move_lines:
                 rows.append({
@@ -108,13 +93,6 @@ class ReportLibroAuxiliar(models.AbstractModel):
                 'total_credit': total_credit,
                 'final_balance': final_balance,
             })
-
-        if move_lines:
-            rows.append({'type': 'group', 'code': acc.code, 'name': acc.name})
-            # etc.
-
-        _logger.info("🔚 Total de filas a pintar (rows): %s", len(rows))
-
 
         # Cálculo del Total General
         total_debit_general = sum(r['total_debit'] for r in rows if r['type'] == 'total')

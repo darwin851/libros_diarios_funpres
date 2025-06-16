@@ -16,7 +16,8 @@
                 </sheet>
                 <div class="o_wizard_previewer" js="PreviewTable"/>
                 <footer>
-                    <button name="action_generate_auxiliar" type="object" string="Generar PDF" class="btn-primary"/>
+                    <button name="action_print_pdf" type="object" string="Generar PDF" class="btn-primary"/>
+                    <button name="action_export_excel" type="object" string="Generar Excel" class="btn-secondary"/>
                     <button string="Cancelar" special="cancel"/>
                 </footer>
             </form>

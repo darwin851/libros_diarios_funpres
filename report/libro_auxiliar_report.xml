@@ -3,7 +3,7 @@
     <record id="action_libro_auxiliar_pdf" model="ir.actions.report">
         <field name="name">Libro Auxiliar (PDF)</field>
         <field name="model">libro.auxiliar.wizard</field>
-        <field name="report_type">qweb-html</field>
+        <field name="report_type">qweb-pdf</field>
         <field name="report_name">libro_diario_report.libro_auxiliar_template_pdf</field>
         <field name="report_file">libro_diario_report.libro_auxiliar_template_pdf</field>
         <field name="print_report_name">

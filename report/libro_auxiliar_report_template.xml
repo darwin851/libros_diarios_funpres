@@ -1,70 +1,109 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="libro_auxiliar_template_pdf">
-        <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+        <t t-call="web.external_layout">
+            <main>
                 <div class="page">
-                    <h2 style="text-align: center;">Libro Auxiliar</h2>
-
+                    <h2>Libro Auxiliar</h2>
                     <p>
-                        <strong>Rango de fechas:</strong>
-                        <t t-esc="docs.date_from"/> a <t t-esc="docs.date_to"/>
+                        <strong>Empresa:</strong>
+                        <span t-esc="docs.env.company.name"/>
                     </p>
-
-                    <t t-set="current_group" t-value="None"/>
-                    <table class="table table-sm" style="font-size: 10px; width: 100%;">
+                    <p>
+                        <strong>Usuario:</strong>
+                        <span t-esc="docs.env.user.name"/>
+                    </p>
+                    <p>
+                        <strong>Periodo:</strong>
+                        <span t-esc="docs.date_from"/>
+                        —
+                        <span t-esc="docs.date_to"/>
+                    </p>
+                    <table style="width:100%; border-collapse:collapse;" border="0">
                         <thead>
                             <tr>
-                                <th style="width: 15%;">Fecha</th>
-                                <th style="width: 40%;">Concepto</th>
-                                <th style="width: 10%; text-align: right;">Debe</th>
-                                <th style="width: 10%; text-align: right;">Haber</th>
-                                <th style="width: 25%; text-align: right;">Saldo</th>
+                                <th style="border:none;">Cuenta</th>
+                                <th style="border:none;">Saldo Inicial</th>
+                                <th style="border:none;">Debe</th>
+                                <th style="border:none;">Haber</th>
+                                <th style="border:none;">Saldo Final</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-set="saldo" t-value="0"/>
-                            <t t-foreach="rows" t-as="r">
-                                <t t-if="r['type'] == 'group'">
+                            <t t-foreach="accounts" t-as="ac">
+                                <!-- Bloque de cada cuenta -->
+                                <tr>
+                                    <td colspan="5" style="border:none; font-weight:bold;">
+                                        <t t-esc="ac['title']"/>
+                                    </td>
+                                </tr>
+                                <!-- Saldo Inicial -->
+                                <tr>
+                                    <td style="border:none;">Saldo Inicial</td>
+                                    <td style="border:none; text-align:right;">
+                                        <t t-esc="'{:,.2f}'.format(ac['saldo_ini'])"/>
+                                    </td>
+                                    <td style="border:none;"/>
+                                    <td style="border:none;"/>
+                                    <td style="border:none; text-align:right;">
+                                        <t t-esc="'{:,.2f}'.format(ac['saldo_ini'])"/>
+                                    </td>
+                                </tr>
+                                <!-- Líneas de asiento -->
+                                <t t-foreach="ac['lines']" t-as="ln">
                                     <tr>
-                                        <td colspan="5"><strong><t t-esc="r['code']"/> - <t t-esc="r['name']"/></strong></td>
+                                        <td style="border:none;"/>
+                                        <td style="border:none; text-align:right;">
+                                            <t t-esc="'{:,.2f}'.format(ln['debit'])"/>
+                                        </td>
+                                        <td style="border:none; text-align:right;">
+                                            <t t-esc="'{:,.2f}'.format(ln['credit'])"/>
+                                        </td>
+                                        <td style="border:none; text-align:right;">
+                                            <t t-esc="'{:,.2f}'.format(ln['saldo'])"/>
+                                        </td>
+                                        <td style="border:none;"/>
                                     </tr>
                                 </t>
-                                <t t-if="r['type'] == 'detail'">
-                                    <tr>
-                                        <td colspan="4"><strong><t t-esc="r['code']"/> - <t t-esc="r['name']"/></strong></td>
-                                        <td style="text-align: right;"><t t-esc="r['initial_balance']"/></td>
-                                    </tr>
-                                    <t t-set="saldo" t-value="r['initial_balance']"/>
-                                </t>
-                                <t t-if="r['type'] == 'move'">
-                                    <t t-set="saldo" t-value="saldo + r['debit'] - r['credit']"/>
-                                    <tr>
-                                        <td><t t-esc="r['date']"/></td>
-                                        <td><t t-esc="r['label']"/></td>
-                                        <td style="text-align: right;"><t t-esc="r['debit']"/></td>
-                                        <td style="text-align: right;"><t t-esc="r['credit']"/></td>
-                                        <td style="text-align: right;"><t t-esc="saldo"/></td>
-                                    </tr>
-                                </t>
-                                <t t-if="r['type'] == 'total'">
-                                    <tr>
-                                        <td colspan="2" style="text-align: right;"><strong>Totales Cuenta</strong></td>
-                                        <td style="text-align: right;"><strong t-esc="r['total_debit']"/></td>
-                                        <td style="text-align: right;"><strong t-esc="r['total_credit']"/></td>
-                                        <td style="text-align: right;"><strong t-esc="r['final_balance']"/></td>
-                                    </tr>
-                                </t>
+                                <!-- Total de la cuenta -->
+                                <tr>
+                                    <td style="border:none; font-weight:bold; text-align:right;">
+                                        Total Cuenta:
+                                    </td>
+                                    <td style="border:none; text-align:right; font-weight:bold;">
+                                        <t t-esc="'{:,.2f}'.format(ac['subtotal_debe'])"/>
+                                    </td>
+                                    <td style="border:none; text-align:right; font-weight:bold;">
+                                        <t t-esc="'{:,.2f}'.format(ac['subtotal_haber'])"/>
+                                    </td>
+                                    <td style="border:none; text-align:right; font-weight:bold;">
+                                        <t t-esc="'{:,.2f}'.format(ac['saldo_fin'])"/>
+                                    </td>
+                                    <td style="border:none;"/>
+                                </tr>
+                                <!-- Separador -->
+                                <tr>
+                                    <td colspan="5" style="border:none; height:8px;"/>
+                                </tr>
                             </t>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="border:none; text-align:right; font-weight:bold;">
+                                    Total General:
+                                </td>
+                                <td style="border:none; text-align:right; font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(total_debe)"/>
+                                </td>
+                                <td style="border:none; text-align:right; font-weight:bold;">
+                                    <t t-esc="'{:,.2f}'.format(total_haber)"/>
+                                </td>
+                                <td style="border:none;"/>
+                                <td style="border:none;"/>
+                            </tr>
+                        </tfoot>
                     </table>
-
-                    <div style="margin-top: 20px; text-align: right;">
-                        <strong>Total General:</strong><br/>
-                        <span>Debe: <t t-esc="total_debit_general"/> | Haber: <t t-esc="total_credit_general"/></span>
-                    </div>
                 </div>
-            </t>
+            </main>
         </t>
     </template>
 </odoo>
