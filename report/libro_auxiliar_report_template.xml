@@ -3,6 +3,11 @@
         <t t-call="web.external_layout">
             <main>
                 <div class="page">
+                    <style>
+                        tfoot {
+                        display: table-row-group;
+                        }
+                    </style>
                     <h2>Libro Auxiliar</h2>
                     <p>
                         <strong>Empresa:</strong>
@@ -18,84 +23,97 @@
                         —
                         <span t-esc="docs.date_to"/>
                     </p>
-                    <table style="width:100%; border-collapse:collapse;" border="0">
+                    <table style="width:100%; border-collapse: separate; border-spacing: 0;" border="0">
                         <thead>
                             <tr>
-                                <th style="border:none;">Cuenta</th>
-                                <th style="border:none;">Saldo Inicial</th>
-                                <th style="border:none;">Debe</th>
-                                <th style="border:none;">Haber</th>
-                                <th style="border:none;">Saldo Final</th>
+                                <th style="border:none; width: 10%">Fecha</th>
+                                <th style="border:none; width: 10%">Partida</th>
+                                <th style="border:none; width: 50%">Concepto</th>
+                                <th style="border:none; width: 10%">Debe</th>
+                                <th style="border:none; width: 10%">Haber</th>
+                                <th style="border:none; width: 10%">Saldo Final</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="accounts" t-as="ac">
-                                <!-- Bloque de cada cuenta -->
-                                <tr>
-                                    <td colspan="5" style="border:none; font-weight:bold;">
-                                        <t t-esc="ac['title']"/>
-                                    </td>
-                                </tr>
-                                <!-- Saldo Inicial -->
-                                <tr>
-                                    <td style="border:none;">Saldo Inicial</td>
-                                    <td style="border:none; text-align:right;">
-                                        <t t-esc="'{:,.2f}'.format(ac['saldo_ini'])"/>
-                                    </td>
-                                    <td style="border:none;"/>
-                                    <td style="border:none;"/>
-                                    <td style="border:none; text-align:right;">
-                                        <t t-esc="'{:,.2f}'.format(ac['saldo_ini'])"/>
-                                    </td>
-                                </tr>
-                                <!-- Líneas de asiento -->
-                                <t t-foreach="ac['lines']" t-as="ln">
+                            <t t-foreach="rows" t-as="row">
+
+                                <t t-if="row['type'] == 'group'">
                                     <tr>
-                                        <td style="border:none;"/>
-                                        <td style="border:none; text-align:right;">
-                                            <t t-esc="'{:,.2f}'.format(ln['debit'])"/>
+                                        <td colspan="5" style="border:none; font-weight:bold; padding-top:10px;">
+                                            <span t-esc="row['code']"/>
+                                            -
+                                            <span t-esc="row['name']"/>
                                         </td>
-                                        <td style="border:none; text-align:right;">
-                                            <t t-esc="'{:,.2f}'.format(ln['credit'])"/>
-                                        </td>
-                                        <td style="border:none; text-align:right;">
-                                            <t t-esc="'{:,.2f}'.format(ln['saldo'])"/>
-                                        </td>
-                                        <td style="border:none;"/>
                                     </tr>
                                 </t>
-                                <!-- Total de la cuenta -->
-                                <tr>
-                                    <td style="border:none; font-weight:bold; text-align:right;">
-                                        Total Cuenta:
-                                    </td>
-                                    <td style="border:none; text-align:right; font-weight:bold;">
-                                        <t t-esc="'{:,.2f}'.format(ac['subtotal_debe'])"/>
-                                    </td>
-                                    <td style="border:none; text-align:right; font-weight:bold;">
-                                        <t t-esc="'{:,.2f}'.format(ac['subtotal_haber'])"/>
-                                    </td>
-                                    <td style="border:none; text-align:right; font-weight:bold;">
-                                        <t t-esc="'{:,.2f}'.format(ac['saldo_fin'])"/>
-                                    </td>
-                                    <td style="border:none;"/>
-                                </tr>
-                                <!-- Separador -->
-                                <tr>
-                                    <td colspan="5" style="border:none; height:8px;"/>
-                                </tr>
+
+                                <t t-if="row['type'] == 'detail'">
+                                    <tr>
+                                        <td style="border:none; padding-left:15px;" colspan="3">
+                                            <span t-esc="row['code']"/>
+                                            -
+                                            <span t-esc="row['name']"/>
+                                        </td>
+                                        <td style="border:none; text-align:right;" colspan="2">
+                                            <span>Saldo inicial:</span>
+                                        </td>
+                                        <td style="border:none; text-align:right;">
+                                            <t t-esc="'{:,.2f}'.format(row['initial_balance'] or 0.0)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <t t-if="row['type'] == 'move'">
+                                    <tr>
+                                        <td style="border:none; padding-left:30px;">
+                                            <span t-esc="row['date']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="row['move_name']"/>
+                                        </td>
+                                        <td style="padding-left: 5px;">
+                                            <span t-esc="row['label']"/>
+                                        </td>
+
+                                        <td style="border:none; text-align:right;">
+                                            <t t-esc="row['debit'] and '{:,.2f}'.format(row['debit']) or ''"/>
+                                        </td>
+                                        <td style="border:none; text-align:right;">
+                                            <t t-esc="row['credit'] and '{:,.2f}'.format(row['credit']) or ''"/>
+                                        </td>
+                                        <td/>
+                                        <td/>
+                                    </tr>
+                                </t>
+
+                                <t t-if="row['type'] == 'total'">
+                                    <tr>
+                                        <td style="border:none; font-weight:bold; text-align:center;" colspan="3">Total
+                                            Cuenta:
+                                        </td>
+                                        <td style="border: none; border-top: 1px solid black; text-align:right; font-weight:bold; ">
+                                            <t t-esc="'{:,.2f}'.format(row['total_debit'] or 0.0)"/>
+                                        </td>
+                                        <td style="border: none; border-top: 1px solid black; text-align:right; font-weight:bold; ">
+                                            <t t-esc="'{:,.2f}'.format(row['total_credit'] or 0.0)"/>
+                                        </td>
+                                        <td style="border:none; text-align:right; font-weight:bold; ">
+                                            <t t-esc="'{:,.2f}'.format(row['final_balance'] or 0.0)"/>
+                                        </td>
+                                    </tr>
+                                </t>
                             </t>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td style="border:none; text-align:right; font-weight:bold;">
+                                <td style="border:none; text-align:right; font-weight:bold;" colspan="3">
                                     Total General:
                                 </td>
                                 <td style="border:none; text-align:right; font-weight:bold;">
-                                    <t t-esc="'{:,.2f}'.format(total_debe)"/>
+                                    <t t-esc="'{:,.2f}'.format(total_debit_general or 0.0)"/>
                                 </td>
                                 <td style="border:none; text-align:right; font-weight:bold;">
-                                    <t t-esc="'{:,.2f}'.format(total_haber)"/>
+                                    <t t-esc="'{:,.2f}'.format(total_credit_general or 0.0)"/>
                                 </td>
                                 <td style="border:none;"/>
                                 <td style="border:none;"/>
