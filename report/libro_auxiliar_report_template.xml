@@ -5,7 +5,10 @@
                 <div class="page">
                     <style>
                         tfoot {
-                        display: table-row-group;
+                            display: table-row-group;
+                        }
+                        .page {
+                            font-size: 12px;
                         }
                     </style>
                     <h2>Libro Auxiliar</h2>
